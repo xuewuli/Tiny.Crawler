@@ -1,0 +1,44 @@
+{
+  "name": "tiny.crawler",
+  "version": "0.0.1",
+  "description": "Crawler is a web crawler.",
+  "main": "./lib/Crawler.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "lint": "eslint ./lib/*.js ./tests/*.js ./examples/*.js --fix",
+    "test": "mocha --timeout=15000 tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xuewuli/Tiny.Crawler.git"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "got": "^9.6.0",
+    "iconv-lite": "^0.4.24",
+    "lodash": "^4.17.11",
+    "tough-cookie": "^3.0.1",
+    "type-is": "^1.6.18"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.3",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "mocha": "^6.1.4",
+    "mocha-testdata": "^1.2.0",
+    "nock": "^11.0.0-beta.15",
+    "prettier": "^1.17.1",
+    "sinon": "^7.3.2"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 100
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}
