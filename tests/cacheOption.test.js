@@ -16,11 +16,31 @@ describe('Cache features tests', () => {
       c = {};
     });
 
-    it('should not skip one single url', done => {
+    it('should not skip one single url [GET]', done => {
       let call = scope.get('/').reply(200);
       c = new Crawler({
         transform: false,
         skipDuplicates: true,
+        callback: (error, result) => {
+          expect(error).to.be.null;
+          expect(result.statusCode).to.equal(200);
+          expect(call.isDone()).to.be.true;
+          done();
+        }
+      });
+
+      c.queue(url);
+    });
+
+    it('should not skip one single url [POST]', done => {
+      let call = scope.post('/').reply(200, '{}');
+      c = new Crawler({
+        transform: false,
+        skipDuplicates: true,
+        searchParams: 'a=1&b=2',
+        method: 'POST',
+        body: { hello: 'hi' },
+        json: true,
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.statusCode).to.equal(200);
@@ -48,6 +68,24 @@ describe('Cache features tests', () => {
       c.queue(url);
     });
 
+    it('should notify the callback when an error occurs and "retries" is disabled [POST]', done => {
+      let koScope = scope.post('/').replyWithError('too bad');
+      c = new Crawler({
+        transform: false,
+        skipDuplicates: true,
+        retries: 0,
+        method: 'POST',
+        form: 'c=3&d=4',
+        callback: error => {
+          expect(error).to.be.a('error');
+          expect(koScope.isDone()).to.be.true;
+          done();
+        }
+      });
+
+      c.queue(url);
+    });
+
     it('should retry and notify the callback when an error occurs and "retries" is enabled', done => {
       let koScope = scope.get('/').replyWithError('too bad');
       let okScope = scope.get('/').reply(200);
@@ -56,6 +94,27 @@ describe('Cache features tests', () => {
         skipDuplicates: true,
         retries: 1,
         retryTimeout: 10,
+        callback: error => {
+          expect(error).to.be.null;
+          expect(koScope.isDone()).to.be.true;
+          expect(okScope.isDone()).to.be.true;
+          done();
+        }
+      });
+
+      c.queue(url);
+    });
+
+    it('should retry and notify the callback when an error occurs and "retries" is enabled [POST]', done => {
+      let koScope = scope.post('/').replyWithError('too bad');
+      let okScope = scope.post('/').reply(200);
+      c = new Crawler({
+        transform: false,
+        skipDuplicates: true,
+        retries: 1,
+        retryTimeout: 10,
+        method: 'POST',
+        form: { hello: 'hi' },
         callback: error => {
           expect(error).to.be.null;
           expect(koScope.isDone()).to.be.true;

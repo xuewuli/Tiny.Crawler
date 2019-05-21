@@ -28,6 +28,25 @@ describe('transform testing', () => {
       ]);
     });
   });
+  describe('transform with custom function', () => {
+    it('should work with custom function', done => {
+      c = new Crawler();
+      c.queue([
+        {
+          html: '<p><i>great!</i></p>',
+          transform: body => {
+            expect(body).to.equal('<p><i>great!</i></p>');
+            return 'great!';
+          },
+          callback: (error, res) => {
+            expect(error).to.be.null;
+            expect(res.$).to.equal('great!');
+            done();
+          }
+        }
+      ]);
+    });
+  });
   describe('transform injection', () => {
     it('should enable cheerio by default', done => {
       c = new Crawler({

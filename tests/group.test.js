@@ -39,10 +39,15 @@ describe('Group tests', () => {
     for (let i = 0; i < 5; ++i) {
       c.queue({ uri: `${url}/status/200` });
     }
+    expect(c.queueSize).to.equal(5);
+
     c.on('drain', () => {
       expect(tsArrs.length).to.equal(5);
       expect(tsArrs[4] - tsArrs[0]).to.be.least(1950);
       expect(tsArrs[4] - tsArrs[0]).to.be.most(2050);
+      expect(c.queueSize).to.equal(0);
+
+      c.shrink();
 
       done();
     });
@@ -51,22 +56,36 @@ describe('Group tests', () => {
     for (let i = 0; i < 5; ++i) {
       c.queue({ uri: `${url}/status/200`, group: i });
     }
+    expect(c.queueSize).to.equal(5);
+
     c.on('drain', () => {
       expect(tsArrs.length).to.equal(5);
       expect(tsArrs[4] - tsArrs[0]).to.be.most(50);
+      expect(c.queueSize).to.equal(0);
+
+      c.shrink();
 
       done();
     });
   });
-  it('Multiple Groups are mutual independent', done => {
+  it('Multiple Groups are mutual independent and shrink work as expect', done => {
     for (let i = 0; i < 5; ++i) {
       let group = i === 4 ? 'second' : 'default';
       c.queue({ uri: `${url}/status/200`, group: group });
     }
+    expect(c.queueSize).to.equal(5);
+
     c.on('drain', () => {
       expect(tsArrs.length).to.equal(5);
       expect(tsArrs[4] - tsArrs[0]).to.be.least(1450);
       expect(tsArrs[4] - tsArrs[0]).to.be.most(1550);
+      expect(c.queueSize).to.equal(0);
+
+      expect(c.status).to.equal(
+        'group: default,running: 0,pending: 0;group: second,running: 0,pending: 0'
+      );
+      c.shrink();
+      expect(c.status).to.equal('');
 
       done();
     });
