@@ -8,7 +8,8 @@
   },
   "scripts": {
     "lint": "eslint ./lib/*.js ./tests/*.js ./examples/*.js --fix",
-    "test": "mocha --timeout=15000 tests/*.test.js"
+    "test": "mocha --timeout=15000 tests/*.test.js",
+    "cover": "nyc --reporter=lcovonly --reporter=text --reporter=text-summary mocha --timeout=15000 --reporter spec tests/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "mocha": "^6.1.4",
     "mocha-testdata": "^1.2.0",
     "nock": "^11.0.0-beta.15",
+    "nyc": "^14.1.1",
     "prettier": "^1.17.1",
     "sinon": "^7.3.2"
   },

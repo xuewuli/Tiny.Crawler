@@ -10,3 +10,6 @@ os:
 script:
   - "npm run lint"
   - "npm run test"
+  - "npm run cover"
+
+after_script: "cat ./coverage/lcov.info | coveralls"
