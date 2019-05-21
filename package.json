@@ -1,7 +1,7 @@
 {
-  "name": "tiny.crawler",
+  "name": "tiny-crawler",
   "version": "0.0.1",
-  "description": "Crawler is a web crawler.",
+  "description": "tiny-crawler is a web crawler.",
   "main": "./lib/Crawler.js",
   "directories": {
     "test": "tests"
@@ -11,6 +11,7 @@
     "test": "mocha --timeout=15000 tests/*.test.js",
     "cover": "nyc --reporter=lcovonly --reporter=text --reporter=text-summary mocha --timeout=15000 --reporter spec tests/*.test.js"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/xuewuli/Tiny.Crawler.git"

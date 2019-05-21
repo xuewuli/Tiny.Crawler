@@ -39,7 +39,7 @@ describe('Cache features tests', () => {
         skipDuplicates: true,
         searchParams: 'a=1&b=2',
         method: 'POST',
-        body: { hello: 'hi' },
+        body: { a: 1, b: 2 },
         json: true,
         callback: (error, result) => {
           expect(error).to.be.null;
@@ -75,7 +75,7 @@ describe('Cache features tests', () => {
         skipDuplicates: true,
         retries: 0,
         method: 'POST',
-        form: 'c=3&d=4',
+        form: 'd=4&c=3',
         callback: error => {
           expect(error).to.be.a('error');
           expect(koScope.isDone()).to.be.true;
@@ -114,7 +114,7 @@ describe('Cache features tests', () => {
         retries: 1,
         retryTimeout: 10,
         method: 'POST',
-        form: { hello: 'hi' },
+        form: { a: 1, b: 2 },
         callback: error => {
           expect(error).to.be.null;
           expect(koScope.isDone()).to.be.true;
