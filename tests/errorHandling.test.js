@@ -11,6 +11,12 @@ describe('Errors', () => {
   before(() => {
     nock.cleanAll();
     nock(url)
+      .get('/')
+      .reply(200, '<html><p>hello<div>dude</p></html>', {
+        'Content-Type': 'text/html'
+      })
+      .persist();
+    nock(url)
       .get('/delay/1')
       .delay(1000)
       .reply(200, 'ok')
@@ -154,7 +160,7 @@ describe('Errors', () => {
 
     it('should not fail on a malformed html if transform is false', finishTest => {
       crawler.queue({
-        html: '<html><p>hello <div>dude</p></html>',
+        uri: url,
         callback: (error, response, done) => {
           expect(error).to.be.null;
           expect(response).not.to.be.null;

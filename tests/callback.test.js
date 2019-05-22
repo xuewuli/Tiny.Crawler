@@ -60,18 +60,4 @@ describe('Callback test', () => {
     crawler.on('drain', done);
     crawler.queue(`${url}/delay`);
   });
-
-  it('should end as expected without callback when encoding error', done => {
-    nock(url)
-      .get('/get')
-      .reply(200, '<html></html>', {
-        'Content-Type': 'text/html'
-      });
-
-    crawler._doEncoding = () => {
-      throw new Error('Error for testing.');
-    };
-    crawler.on('drain', done);
-    crawler.queue(`${url}/get`);
-  });
 });

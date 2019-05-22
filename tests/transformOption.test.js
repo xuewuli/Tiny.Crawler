@@ -3,37 +3,33 @@
 const Crawler = require('../lib/Crawler');
 const expect = require('chai').expect;
 const given = require('mocha-testdata');
+
+const nock = require('nock');
+
+const url = 'http://nock.nock';
+
 let c;
 
 describe('transform testing', () => {
+  before(() => {
+    nock.cleanAll();
+    nock(url)
+      .get('/')
+      .reply(200, '<p><i>great!</i></p>', {
+        'Content-Type': 'text/html'
+      })
+      .persist();
+  });
+
   afterEach(() => {
     c = {};
-  });
-  describe('transform parsing', () => {
-    given.async('cheerio').it('should work on inline html', (done, transform) => {
-      c = new Crawler();
-      c.queue([
-        {
-          html: '<p><i>great!</i></p>',
-          transform: transform,
-          callback: (
-            error,
-            res //noinspection BadExpressionStatementJS,BadExpressionStatementJS
-          ) => {
-            expect(error).to.be.null;
-            expect(res.$('i').html()).to.equal('great!');
-            done();
-          }
-        }
-      ]);
-    });
   });
   describe('transform with custom function', () => {
     it('should work with custom function', done => {
       c = new Crawler();
       c.queue([
         {
-          html: '<p><i>great!</i></p>',
+          uri: url,
           transform: body => {
             expect(body).to.equal('<p><i>great!</i></p>');
             return 'great!';
@@ -50,7 +46,6 @@ describe('transform testing', () => {
   describe('transform injection', () => {
     it('should enable cheerio by default', done => {
       c = new Crawler({
-        html: '<p><i>great!</i></p>',
         transform: true,
         callback: (error, res) => {
           expect(error).to.be.null;
@@ -58,10 +53,10 @@ describe('transform testing', () => {
           done();
         }
       });
-      c.queue([{ html: '<p><i>great!</i></p>' }]);
+      c.queue([url]);
     });
     given
-      .async('cheerio', { name: 'cheerio' })
+      .async('cheerio', { name: 'cheerio' }, {}, 1)
       .it('should enable cheerio if set', (done, transform) => {
         c = new Crawler({
           transform: transform,
@@ -71,7 +66,7 @@ describe('transform testing', () => {
             done();
           }
         });
-        c.queue([{ html: '<p><i>great!</i></p>' }]);
+        c.queue([url]);
       });
     it('should disable transform if set to false', done => {
       c = new Crawler({
@@ -82,19 +77,21 @@ describe('transform testing', () => {
           done();
         }
       });
-      c.queue([{ html: '<p><i>great!</i></p>' }]);
+      c.queue([url]);
     });
-    given.async(false, null).it('should not inject transform', (done, transform) => {
-      c = new Crawler({
-        transform: transform,
-        callback: (error, res) => {
-          expect(error).to.be.null;
-          expect(res.$).to.be.undefined;
-          done();
-        }
+    given
+      .async(null, undefined, '', NaN, 0)
+      .it('should not inject transform', (done, transform) => {
+        c = new Crawler({
+          transform: transform,
+          callback: (error, res) => {
+            expect(error).to.be.null;
+            expect(res.$).to.be.undefined;
+            done();
+          }
+        });
+        c.queue([url]);
       });
-      c.queue([{ html: '<p><i>great!</i></p>' }]);
-    });
     given
       .async('cheerio')
       .it(
@@ -108,7 +105,7 @@ describe('transform testing', () => {
               done();
             }
           });
-          c.queue([{ html: '<p><i>great!</i></p>' }]);
+          c.queue([url]);
         }
       );
     given
@@ -122,7 +119,7 @@ describe('transform testing', () => {
             done();
           }
         });
-        c.queue([{ html: '<p><i>great!</i></p>' }]);
+        c.queue([url]);
       });
   });
   describe('Cheerio specific test', () => {
@@ -145,7 +142,7 @@ describe('transform testing', () => {
       });
 
       c.on('drain', done);
-      c.queue([{ html: '<p><i>great!</i></p>' }]);
+      c.queue([url]);
     });
   });
 });
