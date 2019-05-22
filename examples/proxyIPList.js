@@ -1,6 +1,6 @@
 'use strict';
 
-const Crawler = require('..');
+const Crawler = require('../lib/Crawler');
 const ua = require('./ua_list');
 
 const options = {
@@ -10,23 +10,10 @@ const options = {
   options: {
     timeout: 20000,
     followRedirect: true
-  },
-  callback: process
+  }
 };
 
 const ipArr = [];
-const max = 3;
-
-let curPage = 1;
-
-const save = data => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log('data len:', data.length);
-      resolve();
-    }, 1000);
-  });
-};
 
 options.callback = (error, res, done) => {
   if (error) {
@@ -36,55 +23,19 @@ options.callback = (error, res, done) => {
   const ipList = res.$('#ip_list tr');
 
   for (let i = 1, n = ipList.length; i < n; ++i) {
-    const value = ipList.eq(i);
+    const value = ipList.eq(i).find('td');
+
+    const protocol = value.eq(5).html();
+    const ip = value.eq(1).html();
+    const port = value.eq(2).html();
+    const status = value.eq(4).html();
+
     ipArr.push({
-      protocol: value
-        .find('td')
-        .eq(5)
-        .html()
-        ? value
-            .find('td')
-            .eq(5)
-            .html()
-            .toLowerCase()
-        : '',
-      ip: value
-        .find('td')
-        .eq(1)
-        .html(),
-      port: value
-        .find('td')
-        .eq(2)
-        .html(),
-      status: value
-        .find('td')
-        .eq(4)
-        .html()
-        ? value
-            .find('td')
-            .eq(4)
-            .html()
-            .trim()
-        : '',
-      responseTime: value
-        .find('td')
-        .eq(6)
-        .find('.bar')
-        .attr('title')
-        ? value
-            .find('td')
-            .eq(6)
-            .find('.bar')
-            .attr('title')
-            .trim()
-        : ''
+      protocol,
+      ip,
+      port,
+      status
     });
-  }
-
-  console.log(ipArr.length);
-
-  if (++curPage <= max) {
-    crawler.queue('http://www.xicidaili.com/wt/' + curPage);
   }
 
   return done();
@@ -92,10 +43,12 @@ options.callback = (error, res, done) => {
 
 const crawler = new Crawler(options);
 
-crawler.queue('http://www.xicidaili.com/wt/' + curPage);
+crawler.queue([
+  'http://www.xicidaili.com/wt/1',
+  'http://www.xicidaili.com/wt/2',
+  'http://www.xicidaili.com/wt/3'
+]);
 
-crawler.on('drain', async () => {
-  console.log('saved begin:', Date.now());
-  await save(ipArr);
-  console.log('saved end:', Date.now());
+crawler.on('drain', () => {
+  console.log('total ', ipArr.length);
 });

@@ -40,6 +40,7 @@ describe('Encoding', () => {
     crawler.queue([
       {
         uri: url,
+        forceUTF8: true,
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.charset).to.eql(charsetName);
@@ -50,11 +51,11 @@ describe('Encoding', () => {
     ]);
   });
 
-  it('should return buffer if encoding = null', done => {
+  it('should return buffer if raw = true', done => {
     crawler.queue([
       {
         uri: url,
-        encoding: null,
+        raw: true,
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.body instanceof Buffer).to.be.true;
@@ -68,6 +69,7 @@ describe('Encoding', () => {
     crawler.queue([
       {
         uri: url,
+        forceUTF8: true,
         incomingEncoding: charsetName,
         callback: (error, result) => {
           expect(error).to.be.null;
@@ -83,6 +85,7 @@ describe('Encoding', () => {
     crawler.queue([
       {
         uri: url,
+        forceUTF8: true,
         incomingEncoding: 'gb2312',
         callback: (error, result) => {
           expect(error).to.be.null;
@@ -97,6 +100,7 @@ describe('Encoding', () => {
     crawler.queue([
       {
         uri: url,
+        forceUTF8: true,
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.charset).to.equal(charsetName);
@@ -111,6 +115,7 @@ describe('Encoding', () => {
     crawler.queue([
       {
         uri: urlWithoutCharsetHeader,
+        forceUTF8: true,
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.charset).to.equal(charsetName);

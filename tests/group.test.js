@@ -39,6 +39,9 @@ describe('Group tests', () => {
     for (let i = 0; i < 5; ++i) {
       c.queue({ uri: `${url}/status/200` });
     }
+
+    expect(c.queueSize).to.equal(5);
+    c.shrink();
     expect(c.queueSize).to.equal(5);
 
     c.on('drain', () => {

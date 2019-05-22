@@ -38,6 +38,17 @@ describe('Callback test', () => {
     crawler.queue(`${url}/get`);
   });
 
+  it('should end as expected', done => {
+    nock(url)
+      .get('/get')
+      .reply(200, '', {
+        'Content-Type': 'image/png'
+      });
+
+    crawler.on('drain', done);
+    crawler.queue(`${url}/get`);
+  });
+
   it('should end as expected without callback when timedout', done => {
     nock(url)
       .get('/delay')

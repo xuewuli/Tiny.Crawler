@@ -18,8 +18,10 @@ describe('Request tests', () => {
   beforeEach(() => {
     crawler = new Crawler({
       retries: 0,
-      json: true,
-      transform: false
+      transform: false,
+      options: {
+        json: true
+      }
     });
 
     scope = nock(url)
@@ -99,9 +101,9 @@ describe('Request tests', () => {
   it('should replace the global User-Agent', end => {
     crawler = new Crawler({
       options: {
+        json: true,
         headers: { 'User-Agent': 'test/1.2' }
       },
-      json: true,
       transform: false,
       callback: (error, res, done) => {
         expect(error).to.be.null;
@@ -119,9 +121,11 @@ describe('Request tests', () => {
 
   it('should replace the global userAgent', end => {
     crawler = new Crawler({
-      json: true,
       userAgent: 'test/1.2',
       transform: false,
+      options: {
+        json: true
+      },
       callback: (error, res, done) => {
         expect(error).to.be.null;
         expect(res.body['user-agent']).to.equal('foo/bar');
@@ -131,6 +135,36 @@ describe('Request tests', () => {
     });
 
     crawler.queue({ uri: `${url}${headerPath}`, userAgent: 'foo/bar' });
+  });
+
+  it('should rotate the userAgent', end => {
+    crawler = new Crawler({
+      userAgent: ['test/1.1', 'test/1.2'],
+      rotateUA: true,
+      transform: false,
+      options: {
+        json: true
+      }
+    });
+
+    crawler.queue({
+      uri: `${url}${headerPath}`,
+      callback: (error, res, done) => {
+        expect(error).to.be.null;
+        expect(res.body['user-agent']).to.equal('test/1.1');
+        done();
+      }
+    });
+
+    crawler.queue({
+      uri: `${url}${headerPath}`,
+      callback: (error, res, done) => {
+        expect(error).to.be.null;
+        expect(res.body['user-agent']).to.equal('test/1.2');
+        done();
+        end();
+      }
+    });
   });
 
   it('should spoof the referer', end => {

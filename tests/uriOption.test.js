@@ -17,7 +17,7 @@ describe('Uri Options', () => {
       .persist();
   });
 
-  const crawler = new Crawler({ transform: false });
+  const crawler = new Crawler({ transform: false, debug: true });
 
   it('should work if uri is string', finishTest => {
     crawler.queue({
@@ -46,7 +46,7 @@ describe('Uri Options', () => {
 
   it('should skip if the uri is undefined or an empty string', finishTest => {
     const push = sinon.spy(crawler, '_pushToQueue');
-    crawler.queue([undefined, null, []]);
+    crawler.queue([undefined, null]);
     crawler.queue({
       uri: url,
       callback: (error, response, done) => {

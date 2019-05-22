@@ -16,7 +16,7 @@ describe('Cache features tests', () => {
       c = {};
     });
 
-    it('should not skip one single url [GET]', done => {
+    it('skip should work as expect', done => {
       let call = scope.get('/').reply(200);
       c = new Crawler({
         transform: false,
@@ -25,6 +25,11 @@ describe('Cache features tests', () => {
           expect(error).to.be.null;
           expect(result.statusCode).to.equal(200);
           expect(call.isDone()).to.be.true;
+
+          const queueSize = c.queueSize;
+          c.queue(url);
+          expect(c.queueSize).to.equal(queueSize);
+
           done();
         }
       });
@@ -32,19 +37,26 @@ describe('Cache features tests', () => {
       c.queue(url);
     });
 
-    it('should not skip one single url [POST]', done => {
+    it('skip should work as expect [POST]', done => {
       let call = scope.post('/').reply(200, '{}');
       c = new Crawler({
         transform: false,
         skipDuplicates: true,
-        searchParams: 'a=1&b=2',
-        method: 'POST',
-        body: { a: 1, b: 2 },
-        json: true,
+        options: {
+          method: 'POST',
+          searchParams: 'a=1&b=2',
+          body: { a: 1, b: 2, b: 3 },
+          json: true
+        },
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.statusCode).to.equal(200);
           expect(call.isDone()).to.be.true;
+
+          const queueSize = c.queueSize;
+          c.queue(url);
+          expect(c.queueSize).to.equal(queueSize);
+
           done();
         }
       });
@@ -74,8 +86,11 @@ describe('Cache features tests', () => {
         transform: false,
         skipDuplicates: true,
         retries: 0,
-        method: 'POST',
-        form: 'd=4&c=3',
+        options: {
+          method: 'POST',
+          searchParams: { a: 1, b: 2 },
+          form: 'd=4&c=3'
+        },
         callback: error => {
           expect(error).to.be.a('error');
           expect(koScope.isDone()).to.be.true;
@@ -113,8 +128,10 @@ describe('Cache features tests', () => {
         skipDuplicates: true,
         retries: 1,
         retryTimeout: 10,
-        method: 'POST',
-        form: { a: 1, b: 2 },
+        options: {
+          method: 'POST',
+          form: { a: 1, b: 2 }
+        },
         callback: error => {
           expect(error).to.be.null;
           expect(koScope.isDone()).to.be.true;

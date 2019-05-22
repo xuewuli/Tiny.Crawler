@@ -130,4 +130,24 @@ describe('Direct feature tests', () => {
       }
     });
   });
+
+  it('Illegal task option', finishTest => {
+    const c = new Crawler({
+      transform: false
+    });
+
+    c.direct(null);
+
+    finishTest();
+  });
+
+  it('must specify callback', finishTest => {
+    const c = new Crawler({
+      transform: false
+    });
+
+    c.direct(url);
+
+    finishTest();
+  });
 });
