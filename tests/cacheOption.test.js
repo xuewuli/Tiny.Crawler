@@ -21,6 +21,9 @@ describe('Cache features tests', () => {
       c = new Crawler({
         transform: false,
         skipDuplicates: true,
+        options: {
+          form: 'true'
+        },
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.statusCode).to.equal(200);

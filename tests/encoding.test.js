@@ -15,7 +15,9 @@ describe('Encoding', () => {
   const path = `/charsets/${encodingFileName}`;
   const url = `${origin}${path}`;
   const pathWithoutCharsetHeader = `/charsets-noheader/${encodingFileName}`;
+  const pathGB2312 = '/gb2312';
   const urlWithoutCharsetHeader = `${origin}${pathWithoutCharsetHeader}`;
+  const urlGB2312 = `${origin}${pathGB2312}`;
 
   let crawler = null;
 
@@ -33,6 +35,12 @@ describe('Encoding', () => {
       .get(pathWithoutCharsetHeader)
       .replyWithFile(200, `${__dirname}/${encodingFileName}`, {
         'Content-Type': 'text/html'
+      });
+
+    nock(origin)
+      .get(pathGB2312)
+      .replyWithFile(200, `${__dirname}/${encodingFileName}`, {
+        'Content-Type': 'text/html;charset=gb2312'
       });
   });
 
@@ -59,6 +67,20 @@ describe('Encoding', () => {
         callback: (error, result) => {
           expect(error).to.be.null;
           expect(result.body instanceof Buffer).to.be.true;
+          done();
+        }
+      }
+    ]);
+  });
+
+  it('treat gb2312 as gbk, for iconv-lite', done => {
+    crawler.queue([
+      {
+        uri: urlGB2312,
+        forceUTF8: true,
+        callback: (error, result) => {
+          expect(error).to.be.null;
+          expect(result.charset).to.equal('gbk');
           done();
         }
       }

@@ -15,11 +15,6 @@ const crawler = new Crawler({
     followRedirect: true
   },
   callback: (error, res, done) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(res.body);
-    }
     done();
   }
 });

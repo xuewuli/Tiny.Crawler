@@ -48,7 +48,3 @@ crawler.queue([
   'http://www.xicidaili.com/wt/2',
   'http://www.xicidaili.com/wt/3'
 ]);
-
-crawler.on('drain', () => {
-  console.log('total ', ipArr.length);
-});

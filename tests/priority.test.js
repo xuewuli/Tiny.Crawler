@@ -72,6 +72,13 @@ describe('Priority test', () => {
     ]);
   });
 
+  it('simple op', done => {
+    c.setGroupProperty('test');
+    c.setGroupProperty('test', 'dummy');
+    c.setGroupProperty('test', 'dummy', 0);
+    done();
+  });
+
   it('should execute in order', done => {
     setTimeout(() => {
       expect(spf[0]).to.equal(3);
