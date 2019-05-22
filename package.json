@@ -1,9 +1,12 @@
 {
   "name": "tiny-crawler",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "tiny-crawler is a web crawler.",
   "keywords": ["crawler", "crawling", "scraper", "scraping", "spider", "cheerio", "got", "nodejs", "dom", "jquery"],
-  "main": "./lib/Crawler.js",
+  "main": "lib/Crawler.js",
+  "files": [
+    "lib/*.js"
+  ],
   "directories": {
     "test": "tests"
   },
