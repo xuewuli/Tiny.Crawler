@@ -2,14 +2,13 @@ language: node_js
 node_js:
   - 8
   - 10
-  - 11
   - 12
 os:
   - linux
 
 script:
   - "npm run lint"
-  - "npm run test"
   - "npm run cover"
 
-after_script: "cat ./coverage/lcov.info | coveralls"
+after_success:
+  - if [[ $TRAVIS_NODE_VERSION == "12" ]]; then cat ./coverage/lcov.info | coveralls; fi
